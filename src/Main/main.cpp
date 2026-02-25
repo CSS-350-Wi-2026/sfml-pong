@@ -40,10 +40,16 @@ struct Paddle
 
 
 int main() {
-	sf::RenderWindow window( sf::VideoMode( { 200, 200 } ), "SFML works!" );
-	sf::CircleShape shape( 100.f );
-	shape.setFillColor( sf::Color::Green );
 
+	sf::RenderWindow window(sf::VideoMode({ WINDOW_W, WINDOW_H }), "Pong",
+                            sf::Style::Titlebar | sf::Style::Close);
+    window.setFramerateLimit(144);
+	
+	// Create Paddles for player and AI
+    Paddle playerPaddle(40.f);
+    Paddle aiPaddle(WINDOW_W - 40.f);
+
+	// Game Loop
 	while ( window.isOpen() )
 	{
 		while ( const std::optional event = window.pollEvent() )
@@ -53,7 +59,11 @@ int main() {
 		}
 
 		window.clear();
-		window.draw( shape );
+		// Draw Paddles
+        window.draw(playerPaddle.shape);
+        window.draw(aiPaddle.shape);
+
+		// Opens Window
 		window.display();
 	}
 }
