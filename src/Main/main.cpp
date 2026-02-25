@@ -15,6 +15,11 @@ constexpr unsigned WINDOW_H   = 600;
 // Paddle Dimensions
 constexpr float    PADDLE_W   = 14.f;
 constexpr float    PADDLE_H   = 90.f;
+// Midline Dash Dimensions
+constexpr float    DASH_W = 4.f;
+constexpr float    DASH_H = 20.f;
+// Theme Color
+constexpr sf::Color THEME_COLOR = sf::Color::White;
 
 struct Paddle
 {
@@ -25,7 +30,7 @@ struct Paddle
     {
         shape.setSize({ PADDLE_W, PADDLE_H });
         shape.setOrigin({ PADDLE_W / 2.f, PADDLE_H / 2.f });
-        shape.setFillColor(sf::Color::White);
+        shape.setFillColor(THEME_COLOR);
         shape.setPosition({ x, WINDOW_H / 2.f });
     }
 
@@ -48,8 +53,8 @@ struct MidLine
 	// Create a dashed midline with the specified number of dashes
     MidLine(int numDashes) {
         for (int i = 0; i < numDashes; ++i) {
-            sf::RectangleShape dash({ 4.f, 20.f });
-            dash.setFillColor(sf::Color::White);
+            sf::RectangleShape dash({ DASH_W, DASH_H });
+            dash.setFillColor(THEME_COLOR);
             dash.setPosition({ WINDOW_W / 2.f - 2.f, i * (WINDOW_H / numDashes) + 10.f });
 			segments.push_back(dash);
         }
