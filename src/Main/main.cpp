@@ -29,6 +29,9 @@ sf::Color bkgColor = sf::Color::Black;
 
 struct Paddle
 {
+private:
+	float yVelocity = 0; // Velocity of the paddle in the vertical direction
+public:
     sf::RectangleShape shape;
 
 	// Create a paddle at the given x position, centered vertically
@@ -50,6 +53,18 @@ struct Paddle
 
 	// Get the bounding box of the paddle for collision detection
     sf::FloatRect bounds() const { return shape.getGlobalBounds(); }
+
+    // Set the vertical velocity of the paddle
+    void setYVelocity(float velocity) { yVelocity = velocity; }
+
+	// Move the paddle by a certain amount
+	void moveY() 
+    { 
+		if (bounds().position.y + yVelocity < 0 || bounds().position.y + bounds().size.y + yVelocity > WINDOW_H) {
+            yVelocity = 0; // Stop movement if it would go out of bounds
+        }
+        shape.move({ 0.f, yVelocity }); 
+    }
 };
 
 struct MidLine
@@ -218,6 +233,10 @@ int main() {
 
 		// Draw Midline
         for (const auto& dash : midline.segments) {window.draw(dash);}
+
+        // Moves Paddles
+        playerPaddle.moveY();
+        aiPaddle.moveY();
 
 		// Opens Window
 		window.display();
