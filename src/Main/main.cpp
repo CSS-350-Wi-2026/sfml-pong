@@ -107,7 +107,7 @@ struct MidLine
     }
 };
 
-//convert a given string to sf::Color object. if invalid string, return black
+//convert a given string to sf::Color object, all lower case, if invalid string, return black
 sf::Color stoC(std::string colorStr) {
     static const std::unordered_map<std::string, sf::Color> colorMap{
         {"black",   sf::Color::Black},
@@ -128,7 +128,7 @@ sf::Color stoC(std::string colorStr) {
     return sf::Color::Black;
 }
 
-//window for settings menu, user input background color and fps
+//window for settings menu
 void settingsWindow() {
     sf::RenderWindow settings(sf::VideoMode({ 400, 250 }), "Settings");
 
@@ -161,7 +161,7 @@ void settingsWindow() {
 
     std::string colorStr;
     std::string fpsStr;
-    bool onColor = true;
+    bool onColor = true; //default editing color
     bool onFps = false;
 
     while (settings.isOpen()) {
