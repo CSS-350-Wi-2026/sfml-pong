@@ -17,6 +17,46 @@ constexpr unsigned WINDOW_H   = 600;
 // Paddle Dimensions
 constexpr float    PADDLE_W   = 14.f;
 constexpr float    PADDLE_H   = 90.f;
+// Ball Radius
+constexpr float    BALL_R     = 9.f;
+// Object Speeds
+constexpr float    PADDLE_SPD = 420.f;
+constexpr float    BALL_SPD   = 400.f;
+
+
+// Ball Structure
+struct Ball
+{
+    sf::CircleShape shape;
+    sf::Vector2f    vel;
+    float           speed;
+
+    Ball()
+    {
+        shape.setRadius(BALL_R);
+        shape.setOrigin({ BALL_R, BALL_R });
+        shape.setFillColor(sf::Color::White);
+    }
+
+    void reset(bool leftServe)
+    {
+        shape.setPosition({ WINDOW_W / 2.f, WINDOW_H / 2.f });
+        speed = BALL_SPD;
+        float angle = (std::rand() % 60 - 30) * 3.14159f / 180.f; 
+        float dirX  = leftServe ? 1.f : -1.f;
+        vel = { dirX * speed * std::cos(angle),
+                speed * std::sin(angle) };
+    }
+
+    void update(float dt)
+    {
+        shape.move(vel * dt);
+    }
+
+    sf::FloatRect bounds() const { return shape.getGlobalBounds(); }
+};
+
+// Paddle Structure
 // Midline Dash Dimensions
 constexpr float    DASH_W = 4.f;
 constexpr float    DASH_H = 20.f;
@@ -82,7 +122,7 @@ struct MidLine
     }
 };
 
-//convert a given string to sf::Color object. if invalid string, return black
+//convert a given string to sf::Color object, all lower case, if invalid string, return black
 sf::Color stoC(std::string colorStr) {
     static const std::unordered_map<std::string, sf::Color> colorMap{
         {"black",   sf::Color::Black},
@@ -103,7 +143,7 @@ sf::Color stoC(std::string colorStr) {
     return sf::Color::Black;
 }
 
-//window for settings menu, user input background color and fps
+//window for settings menu
 void settingsWindow() {
     sf::RenderWindow settings(sf::VideoMode({ 400, 250 }), "Settings");
 
@@ -136,7 +176,7 @@ void settingsWindow() {
 
     std::string colorStr;
     std::string fpsStr;
-    bool onColor = true;
+    bool onColor = true; //default editing color
     bool onFps = false;
 
     while (settings.isOpen()) {
@@ -214,6 +254,10 @@ int main() {
     Paddle playerPaddle(40.f);
     Paddle aiPaddle(WINDOW_W - 40.f);
 
+	// Create Ball
+	Ball ball;
+	ball.reset(true); // Start with player serve
+
 	// Create Midline
 	MidLine midline(15);
 
@@ -237,6 +281,8 @@ int main() {
         // Moves Paddles
         playerPaddle.moveY();
         aiPaddle.moveY();
+		// Draw Ball
+		window.draw(ball.shape);
 
 		// Opens Window
 		window.display();
