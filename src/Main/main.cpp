@@ -20,8 +20,11 @@ constexpr float    PADDLE_H   = 90.f;
 // Ball Radius
 constexpr float    BALL_R     = 9.f;
 // Object Speeds
-constexpr float    PADDLE_SPD = 420.f;
-constexpr float    BALL_SPD   = 400.f;
+constexpr float    PADDLE_SPD = 5;
+constexpr float    BALL_SPD   = 5;
+// Keybinds
+std::vector<sf::Keyboard::Key> UP_KEYS = {sf::Keyboard::Key::W, sf::Keyboard::Key::Up};
+std::vector<sf::Keyboard::Key> DOWN_KEYS = { sf::Keyboard::Key::S, sf::Keyboard::Key::Down};
 
 
 // Ball Structure
@@ -278,9 +281,24 @@ int main() {
 		// Draw Midline
         for (const auto& dash : midline.segments) {window.draw(dash);}
 
+		// Update Velocity based on Input
+		if (sf::Keyboard::isKeyPressed(UP_KEYS[0]) || sf::Keyboard::isKeyPressed(UP_KEYS[1])) {
+            playerPaddle.setYVelocity(-PADDLE_SPD);
+			std::cout << "up key pressed" << std::endl;
+        }
+        else if (sf::Keyboard::isKeyPressed(DOWN_KEYS[0]) || sf::Keyboard::isKeyPressed(DOWN_KEYS[1])) {
+            playerPaddle.setYVelocity(PADDLE_SPD);
+			std::cout << "down key pressed" << std::endl;
+        }
+        else {
+            playerPaddle.setYVelocity(0);
+			std::cout << "no key pressed" << std::endl;
+        }
+
         // Moves Paddles
         playerPaddle.moveY();
         aiPaddle.moveY();
+
 		// Draw Ball
 		window.draw(ball.shape);
 
