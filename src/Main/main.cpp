@@ -21,7 +21,8 @@ constexpr float    PADDLE_H   = 90.f;
 constexpr float    BALL_R     = 9.f;
 // Object Speeds
 constexpr float    PADDLE_SPD = 5.f;
-constexpr float    BALL_VELOCITY   = 1.f;
+constexpr float    BALL_SPD   = 1.f;
+constexpr float    BALL_SPD_INCREMENT = 0.1f; // Increment to increase ball speed after each paddle hit
 // Keybinds
 std::vector<sf::Keyboard::Key> UP_KEYS = {sf::Keyboard::Key::W, sf::Keyboard::Key::Up};
 std::vector<sf::Keyboard::Key> DOWN_KEYS = { sf::Keyboard::Key::S, sf::Keyboard::Key::Down};
@@ -80,8 +81,9 @@ public:
 struct Ball
 {
     sf::CircleShape shape;
-    sf::Vector2f vel;
-    float speed = BALL_VELOCITY;
+    sf::Vector2f    vel;
+    float           speed = BALL_SPD;
+	int             bounces = 0;
 
     Paddle* leftPaddle = nullptr;
     Paddle* rightPaddle = nullptr;
@@ -99,7 +101,7 @@ struct Ball
     void reset(bool leftServe)
     {
         shape.setPosition({ WINDOW_W / 2.f, WINDOW_H / 2.f });
-        speed = BALL_VELOCITY;
+        speed = BALL_SPD;
 
         float angle = (std::rand() % 60 - 30) * 3.14159f / 180.f;
         float dirX = leftServe ? 1.f : -1.f;
@@ -116,7 +118,7 @@ struct Ball
     void update(float dt)
     {
         //move Ball
-        shape.move(vel * dt);
+        shape.move(vel * (dt + (bounces * BALL_SPD_INCREMENT)));
 
         sf::FloatRect ballRect = bounds();
         sf::FloatRect leftRect = leftPaddle->bounds();
@@ -126,11 +128,13 @@ struct Ball
         if (ballRect.findIntersection(leftRect).has_value())
         {
             vel.x = std::abs(vel.x); //bounce right
+			bounces++; //increment bounce count for speed increase
         }
 
         if (ballRect.findIntersection(rightRect).has_value())
         {
             vel.x = -std::abs(vel.x); //bounce left
+			bounces++; //increment bounce count for speed increase
         }
 
         //recompute after bounce
@@ -354,7 +358,7 @@ int main() {
         player2Paddle.moveY();
         
         //move Ball
-		ball.update(BALL_VELOCITY);
+		ball.update(BALL_SPD);
 
 		//opens Window
 		window.display();
