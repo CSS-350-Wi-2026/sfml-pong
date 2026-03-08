@@ -20,46 +20,12 @@ constexpr float    PADDLE_H   = 90.f;
 // Ball Radius
 constexpr float    BALL_R     = 9.f;
 // Object Speeds
-constexpr float    PADDLE_SPD = 5;
-constexpr float    BALL_SPD   = 5;
+constexpr float    PADDLE_SPD = 5.f;
+constexpr float    BALL_VELOCITY   = 1.f;
 // Keybinds
 std::vector<sf::Keyboard::Key> UP_KEYS = {sf::Keyboard::Key::W, sf::Keyboard::Key::Up};
 std::vector<sf::Keyboard::Key> DOWN_KEYS = { sf::Keyboard::Key::S, sf::Keyboard::Key::Down};
 
-
-// Ball Structure
-struct Ball
-{
-    sf::CircleShape shape;
-    sf::Vector2f    vel;
-    float           speed;
-
-    Ball()
-    {
-        shape.setRadius(BALL_R);
-        shape.setOrigin({ BALL_R, BALL_R });
-        shape.setFillColor(sf::Color::White);
-    }
-
-    void reset(bool leftServe)
-    {
-        shape.setPosition({ WINDOW_W / 2.f, WINDOW_H / 2.f });
-        speed = BALL_SPD;
-        float angle = (std::rand() % 60 - 30) * 3.14159f / 180.f; 
-        float dirX  = leftServe ? 1.f : -1.f;
-        vel = { dirX * speed * std::cos(angle),
-                speed * std::sin(angle) };
-    }
-
-    void update(float dt)
-    {
-        shape.move(vel * dt);
-    }
-
-    sf::FloatRect bounds() const { return shape.getGlobalBounds(); }
-};
-
-// Paddle Structure
 // Midline Dash Dimensions
 constexpr float    DASH_W = 4.f;
 constexpr float    DASH_H = 20.f;
@@ -70,6 +36,7 @@ int fps = 60;
 // background color
 sf::Color bkgColor = sf::Color::Black;
 
+// Paddle Structure
 struct Paddle
 {
 private:
@@ -110,11 +77,82 @@ public:
     }
 };
 
+struct Ball
+{
+    sf::CircleShape shape;
+    sf::Vector2f vel;
+    float speed = BALL_VELOCITY;
+
+    Paddle* leftPaddle = nullptr;
+    Paddle* rightPaddle = nullptr;
+
+    Ball(Paddle& left, Paddle& right)
+    {
+        shape.setRadius(BALL_R);
+        shape.setOrigin({ BALL_R, BALL_R });
+        shape.setFillColor(sf::Color::White);
+
+        leftPaddle = &left;
+        rightPaddle = &right;
+    }
+
+    void reset(bool leftServe)
+    {
+        shape.setPosition({ WINDOW_W / 2.f, WINDOW_H / 2.f });
+        speed = BALL_VELOCITY;
+
+        float angle = (std::rand() % 60 - 30) * 3.14159f / 180.f;
+        float dirX = leftServe ? 1.f : -1.f;
+
+        vel = { dirX * speed * std::cos(angle),
+               speed * std::sin(angle) };
+    }
+
+    sf::FloatRect bounds() const
+    {
+        return shape.getGlobalBounds();
+    }
+
+    void update(float dt)
+    {
+        //move Ball
+        shape.move(vel * dt);
+
+        sf::FloatRect ballRect = bounds();
+        sf::FloatRect leftRect = leftPaddle->bounds();
+        sf::FloatRect rightRect = rightPaddle->bounds();
+
+        //Paddle collisions
+        if (ballRect.findIntersection(leftRect).has_value())
+        {
+            vel.x = std::abs(vel.x); //bounce right
+        }
+
+        if (ballRect.findIntersection(rightRect).has_value())
+        {
+            vel.x = -std::abs(vel.x); //bounce left
+        }
+
+        //recompute after bounce
+        ballRect = bounds();
+
+        //wall collisions
+        if (ballRect.position.y <= 0.f)
+        {
+            vel.y = std::abs(vel.y); //bounce down
+        }
+        else if (ballRect.position.y + ballRect.size.y >= WINDOW_H)
+        {
+            vel.y = -std::abs(vel.y); //bounce up
+        }
+    }
+};
+
 struct MidLine
 {
 	std::vector<sf::RectangleShape> segments;
 
-	// Create a dashed midline with the specified number of dashes
+	//create a dashed midline with the specified number of dashes
     MidLine(int numDashes) {
         for (int i = 0; i < numDashes; ++i) {
             sf::RectangleShape dash({ DASH_W, DASH_H });
@@ -253,18 +291,18 @@ int main() {
                             sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(fps);
 	
-	// Create Paddles for player and AI
-    Paddle playerPaddle(40.f);
-    Paddle aiPaddle(WINDOW_W - 40.f);
+	//create Paddles for players 1 and 2
+    Paddle player1Paddle(40.f);
+    Paddle player2Paddle(WINDOW_W - 40.f);
 
-	// Create Ball
-	Ball ball;
+	//create Ball
+	Ball ball(player1Paddle, player2Paddle);
 	ball.reset(true); // Start with player serve
 
-	// Create Midline
+	//create Midline
 	MidLine midline(15);
 
-	// Game Loop
+	//game loop
 	while ( window.isOpen() )
 	{
 		while ( const std::optional event = window.pollEvent() )
@@ -274,35 +312,51 @@ int main() {
 		}
 
 		window.clear();
-		// Draw Paddles
-        window.draw(playerPaddle.shape);
-        window.draw(aiPaddle.shape);
+		//draw Paddles
+        window.draw(player1Paddle.shape);
+        window.draw(player2Paddle.shape);
 
-		// Draw Midline
+		//draw Midline
         for (const auto& dash : midline.segments) {window.draw(dash);}
 
-		// Update Velocity based on Input
-		if (sf::Keyboard::isKeyPressed(UP_KEYS[0]) || sf::Keyboard::isKeyPressed(UP_KEYS[1])) {
-            playerPaddle.setYVelocity(-PADDLE_SPD);
-			std::cout << "up key pressed" << std::endl;
-        }
-        else if (sf::Keyboard::isKeyPressed(DOWN_KEYS[0]) || sf::Keyboard::isKeyPressed(DOWN_KEYS[1])) {
-            playerPaddle.setYVelocity(PADDLE_SPD);
-			std::cout << "down key pressed" << std::endl;
-        }
-        else {
-            playerPaddle.setYVelocity(0);
-			std::cout << "no key pressed" << std::endl;
-        }
-
-        // Moves Paddles
-        playerPaddle.moveY();
-        aiPaddle.moveY();
-
-		// Draw Ball
+		//draw Ball
 		window.draw(ball.shape);
 
-		// Opens Window
+        //update Paddle velocity based on input for player 1
+        if (sf::Keyboard::isKeyPressed(UP_KEYS[0])) {
+            player1Paddle.setYVelocity(-PADDLE_SPD);
+            std::cout << "up key pressed" << std::endl;
+        }
+        else if (sf::Keyboard::isKeyPressed(DOWN_KEYS[0])) {
+            player1Paddle.setYVelocity(PADDLE_SPD);
+            std::cout << "down key pressed" << std::endl;
+        }
+        else {
+            player1Paddle.setYVelocity(0);
+            std::cout << "no key pressed" << std::endl;
+        }
+        //update Paddle velocity based on input for player 2
+		if (sf::Keyboard::isKeyPressed(UP_KEYS[1])) {
+            player2Paddle.setYVelocity(-PADDLE_SPD);
+            std::cout << "up key pressed" << std::endl;
+        }
+        else if (sf::Keyboard::isKeyPressed(DOWN_KEYS[1])) {
+            player2Paddle.setYVelocity(PADDLE_SPD);
+            std::cout << "down key pressed" << std::endl;
+        }
+        else {
+            player2Paddle.setYVelocity(0);
+            std::cout << "no key pressed" << std::endl;
+        }
+
+        //move Paddles
+        player1Paddle.moveY();
+        player2Paddle.moveY();
+        
+        //move Ball
+		ball.update(BALL_VELOCITY);
+
+		//opens Window
 		window.display();
 	}
 }
