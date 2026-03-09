@@ -294,17 +294,22 @@ sf::SoundBuffer makeTone(float freqHz, float durationSec, float amplitude = 0.4f
 {
     const unsigned sampleRate  = 44100;
     const unsigned sampleCount = static_cast<unsigned>(sampleRate * durationSec);
-    std::vector<sf::Int16> samples(sampleCount);
+
+    std::vector<std::int16_t> samples(sampleCount);
+
     for (unsigned i = 0; i < sampleCount; ++i)
     {
-        float t      = static_cast<float>(i) / sampleRate;
-        float env    = 1.f - (t / durationSec);          // linear fade-out
-        samples[i]   = static_cast<sf::Int16>(
+        float t   = static_cast<float>(i) / sampleRate;
+        float env = 1.f - (t / durationSec);
+
+        samples[i] = static_cast<std::int16_t>(
             amplitude * env * 32767.f *
             std::sin(2.f * 3.14159265f * freqHz * t));
     }
+
     sf::SoundBuffer buf;
-    buf.loadFromSamples(samples.data(), sampleCount, 1, sampleRate);
+    buf.loadFromSamples(samples.data(), sampleCount, 1, sampleRate, {});
+
     return buf;
 }
 
