@@ -22,7 +22,7 @@ constexpr float    BALL_R     = 9.f;
 // Object Speeds
 constexpr float    PADDLE_SPD = 5.f;
 constexpr float    BALL_SPD   = 1.f;
-constexpr float    BALL_SPD_INCREMENT = 0.1f; // Increment to increase ball speed after each paddle hit
+constexpr float    BALL_SPD_INCREMENT = 0.1f; //increment to increase ball speed after each paddle hit
 // Keybinds
 std::vector<sf::Keyboard::Key> UP_KEYS = {sf::Keyboard::Key::W, sf::Keyboard::Key::Up};
 std::vector<sf::Keyboard::Key> DOWN_KEYS = { sf::Keyboard::Key::S, sf::Keyboard::Key::Down};
@@ -41,11 +41,11 @@ sf::Color bkgColor = sf::Color::Black;
 struct Paddle
 {
 private:
-	float yVelocity = 0; // Velocity of the paddle in the vertical direction
+	float yVelocity = 0; //velocity of the paddle in the vertical direction
 public:
     sf::RectangleShape shape;
 
-	// Create a paddle at the given x position, centered vertically
+	//create a Paddle at the given x position, centered vertically
     Paddle(float x)
     {
         shape.setSize({ PADDLE_W, PADDLE_H });
@@ -54,7 +54,7 @@ public:
         shape.setPosition({ x, WINDOW_H / 2.f });
     }
 
-	// Ensure the paddle stays within the window bounds
+	//ensure the paddle stays within the window bounds
     void clamp()
     {
         float y = shape.getPosition().y;
@@ -62,13 +62,13 @@ public:
         shape.setPosition({ shape.getPosition().x, y });
     }
 
-	// Get the bounding box of the paddle for collision detection
+	//get the bounding box of the Paddle for collision detection
     sf::FloatRect bounds() const { return shape.getGlobalBounds(); }
 
-    // Set the vertical velocity of the paddle
+    //set the vertical velocity of the Paddle
     void setYVelocity(float velocity) { yVelocity = velocity; }
 
-	// Move the paddle by a certain amount
+	//move the Paddle by a certain amount
 	void moveY() 
     { 
 		if (bounds().position.y + yVelocity < 0 || bounds().position.y + bounds().size.y + yVelocity > WINDOW_H) {
