@@ -289,6 +289,25 @@ void settingsWindow() {
     }
 }
 
+// Helper function to generate a tone of a specific frequency and duration, returns an sf::SoundBuffer that can be used to play the sound
+sf::SoundBuffer makeTone(float freqHz, float durationSec, float amplitude = 0.4f)
+{
+    const unsigned sampleRate  = 44100;
+    const unsigned sampleCount = static_cast<unsigned>(sampleRate * durationSec);
+    std::vector<sf::Int16> samples(sampleCount);
+    for (unsigned i = 0; i < sampleCount; ++i)
+    {
+        float t      = static_cast<float>(i) / sampleRate;
+        float env    = 1.f - (t / durationSec);          // linear fade-out
+        samples[i]   = static_cast<sf::Int16>(
+            amplitude * env * 32767.f *
+            std::sin(2.f * 3.14159265f * freqHz * t));
+    }
+    sf::SoundBuffer buf;
+    buf.loadFromSamples(samples.data(), sampleCount, 1, sampleRate);
+    return buf;
+}
+
 int main() {
 
 	sf::RenderWindow window(sf::VideoMode({ WINDOW_W, WINDOW_H }), "Pong",
