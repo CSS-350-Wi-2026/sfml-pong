@@ -17,4 +17,10 @@ add_executable(main ${SOURCES})
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics SFML::Audio)
 
+# Copy font to the executable output directory after every build
+add_custom_command(TARGET main POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_SOURCE_DIR}/DejaVuSans.ttf
+        $<TARGET_FILE_DIR:main>/DejaVuSans.ttf)
+
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT main)
