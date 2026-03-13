@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <functional>
 #include <cstring>
+#include <fstream>
 
 // Font file — place DejaVuSans.ttf in the same directory as the executable.
 static const char FONT_PATH[] = "DejaVuSans.ttf";
@@ -47,6 +48,7 @@ constexpr sf::Color THEME_COLOR = sf::Color::White;
 int fps = 60;
 // background color
 sf::Color bkgColor = sf::Color::Black;
+std::string bkgColorStr = "black"; //string version
 
 // Game States
 enum class State { Menu, Playing, Paused, GameOver };
@@ -236,6 +238,41 @@ sf::Color stoC(std::string colorStr) {
     return sf::Color::Black;
 }
 
+//load user settings from a txt file called config.txt, if file not found, create one with default value
+//file structure should be fps"\n"color
+void loadConfig() {
+    std::ifstream readFile("config.txt");
+
+    if (!readFile.is_open()) {
+        std::ofstream writeFile("config.txt");
+
+        writeFile << fps << "\n" << "black";
+        writeFile.close();
+    }
+    else {
+        std::string temp;
+        readFile >> fps;
+        readFile >> temp;
+        bkgColor = stoC(temp);
+        readFile.close();
+    }
+}
+
+//update the user settings file, will create a file if no file found
+//file structure should be fps"\n"color
+void updateConfig(const int& fps, const std::string& color) {
+    std::ofstream writeFile("config.txt", std::ios::trunc);
+
+    if (writeFile.is_open()) {
+        writeFile << fps << "\n" << color;
+    }
+    else {
+        std::cerr << "Error: cannot save config" << std::endl;
+    }
+
+    writeFile.close();
+}
+
 //window for settings menu
 void settingsWindow(const sf::Font& font)
 {
@@ -317,8 +354,15 @@ void settingsWindow(const sf::Font& font)
         settings.display();
     }
 
-    if (!fpsStr.empty())   fps      = std::stoi(fpsStr);
-    if (!colorStr.empty()) bkgColor = stoC(colorStr);
+    if (!fpsStr.empty()) { 
+        fps = std::stoi(fpsStr); 
+        updateConfig(fps, bkgColorStr);
+    }
+    if (!colorStr.empty()) { 
+        bkgColor = stoC(colorStr);
+        bkgColorStr = colorStr;
+        updateConfig(fps, colorStr);
+    }
 }
 
 
@@ -361,6 +405,9 @@ int main() {
         std::cerr << "WARNING: Could not load " << FONT_PATH
                   << " — place DejaVuSans.ttf next to the executable\n";
     }
+
+    //load user settings
+    loadConfig();
 
     // Sounds
     sf::SoundBuffer bufPaddle = makeTone(480.f, 0.06f);
