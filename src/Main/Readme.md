@@ -12,17 +12,16 @@ The game provides the ability for user to change background color, volume, and F
 
 ## System Requirement
 
--64-bit CPU (program compiled with 64-bit SFML)
--At least 2 GB system memory
--Git
--Keyboard with WASD and 4 arrow keys
--Display with minimum 800x600 resolution
--Has audio output
+-64-bit CPU (program compiled with 64-bit SFML)\
+-At least 2 GB system memory\
+-Git\
+-Display with minimum 800x600 resolution\
+-Has audio output\
 
 
-## -Installing and Running
+## install and Run
 
-	### Windows:
+### Windows:
 
 1. Pull this repository
 2. Navigate to src\Main
@@ -36,6 +35,13 @@ The game provides the ability for user to change background color, volume, and F
 4. Run the executable
 
 
-## -Acknowledgement
+## How to Play
+
+Press the up and down arrow keys to move the paddle up and down\
+Press esc key to pause\
+Press tab to open settings window\
+
+
+## Acknowledgement
 
 The SFML library
