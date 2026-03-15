@@ -48,7 +48,7 @@ constexpr sf::Color THEME_COLOR = sf::Color::White;
 int fps = 60;
 // background color
 sf::Color bkgColor = sf::Color::Black;
-std::string bkgColorStr = "black"; //string version
+std::string bkgColorStr = "black"; //string version of bkgColor
 
 // Game States
 enum class State { Menu, Playing, Paused, GameOver };
@@ -218,7 +218,7 @@ struct MidLine
 };
 
 //convert a given string to sf::Color object, all lower case, if invalid string, return black
-sf::Color stoC(std::string colorStr) {
+sf::Color stoC(const std::string colorStr) {
     static const std::unordered_map<std::string, sf::Color> colorMap{
         {"black",   sf::Color::Black},
         {"white",   sf::Color::White},
@@ -235,11 +235,14 @@ sf::Color stoC(std::string colorStr) {
         return itera->second;
     }
 
+    std::cerr << "Error: invalid color" << std::endl;
     return sf::Color::Black;
 }
 
 //load user settings from a txt file called config.txt, if file not found, create one with default value
-//file structure should be fps"\n"color
+//file should look like: 
+//fps
+//color
 void loadConfig() {
     std::ifstream readFile("config.txt");
 
@@ -258,8 +261,10 @@ void loadConfig() {
     }
 }
 
-//update the user settings file, will create a file if no file found
-//file structure should be fps"\n"color
+//update the user settings file, will create a config.txt if no file found
+//file should look like: 
+//fps
+//color
 void updateConfig(const int& fps, const std::string& color) {
     std::ofstream writeFile("config.txt", std::ios::trunc);
 
@@ -278,7 +283,7 @@ void settingsWindow(const sf::Font& font)
 {
     sf::RenderWindow settings(sf::VideoMode({ 400, 260 }), "Settings");
 
-    sf::Text bgColorLabel(font, "Background color:", 20);
+    sf::Text bgColorLabel(font, "Background color (lower case):", 20);
     bgColorLabel.setFillColor(sf::Color::Black);
     bgColorLabel.setPosition({ 20, 15 });
 
@@ -360,8 +365,15 @@ void settingsWindow(const sf::Font& font)
     }
     if (!colorStr.empty()) { 
         bkgColor = stoC(colorStr);
-        bkgColorStr = colorStr;
-        updateConfig(fps, colorStr);
+
+        if (bkgColor == sf::Color::Black) { //if entered invalid color and stoC() return black
+            bkgColorStr = "black";
+            updateConfig(fps, "black");
+        }
+        else {
+            bkgColorStr = colorStr;
+            updateConfig(fps, colorStr);
+        }
     }
 }
 
