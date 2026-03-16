@@ -566,9 +566,15 @@ int main() {
         if (state == State::Playing)
         {
             // Player 1 input
-            if      (sf::Keyboard::isKeyPressed(UP_KEYS[0]))   player1Paddle.setYVelocity(-PADDLE_SPD);
-            else if (sf::Keyboard::isKeyPressed(DOWN_KEYS[0])) player1Paddle.setYVelocity(PADDLE_SPD);
-            else {                                               player1Paddle.setYVelocity(0.f); }
+            if      (sf::Keyboard::isKeyPressed(UP_KEYS[0]) 
+                    || sf::Keyboard::isKeyPressed(UP_KEYS[1])) 
+                    { player1Paddle.setYVelocity(-PADDLE_SPD); }
+
+            else if (sf::Keyboard::isKeyPressed(DOWN_KEYS[0]) 
+                    || sf::Keyboard::isKeyPressed(DOWN_KEYS[1])) 
+                    { player1Paddle.setYVelocity(PADDLE_SPD); }
+
+            else {  player1Paddle.setYVelocity(0.f); }
             player1Paddle.moveY();
 
             // AI tracks the ball
@@ -682,8 +688,6 @@ int main() {
             centreText(sub, WINDOW_H / 2.f + 60.f);
             window.draw(sub);
         }
-
-
 
 		//opens Window
 		window.display();
