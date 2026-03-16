@@ -1,114 +1,317 @@
-# CMake SFML Project Template
+# SFML Pong — Built with the CMake SFML Project Template
 
-This repository template should allow for a fast and hassle-free kick start of your next SFML project using CMake.
-Thanks to [GitHub's nature of templates](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template), you can fork this repository without inheriting its Git history.
+A modern Pong implementation using the [SFML](https://www.sfml-dev.org/) multimedia library and a [CMake](https://cmake.org/)-based build system.
 
-The template starts out very basic, but might receive additional features over time:
+---
 
-- Basic CMake script to build your project and link SFML on any operating system
-- Basic [GitHub Actions](https://github.com/features/actions) script for all major platforms
+# Documentation Index
 
-## Quick start
+Jump to the section you need.
 
-### Command line
+## Game Documentation
+- [Overview](#overview)
+- [Game Description](#game-description)
+- [How to Play](#how-to-play)
+- [System Requirements](#system-requirements)
 
-1. Install [Git](https://git-scm.com/downloads) and [CMake](https://cmake.org/download/). Use your system's package manager if available.
-2. Follow [GitHub's instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) for how to use their project template feature to create your own project. If you don't want to use GitHub, see the section below.
-3. Clone your new GitHub repo and open the repo in your text editor of choice.
-4. Open [CMakeLists.txt](CMakeLists.txt). Rename the project and the target name of the executable to whatever name you want. Make sure to change all occurrences.
-5. If you want to add or remove any .cpp files, change the source files listed in the `add_executable` call in CMakeLists.txt to match the source files your project requires. If you plan on keeping the default main.cpp file then no changes are required.
-6. If your code uses the Audio or Network modules then add `SFML::Audio` or `SFML::Network` to the `target_link_libraries` call alongside the existing `SFML::Graphics` library that is being linked.
-7. If you use Linux, install SFML's dependencies using your system package manager. On Ubuntu and other Debian-based distributions you can use the following commands:
-   ```
-   sudo apt update
-   sudo apt install \
-       libxrandr-dev \
-       libxcursor-dev \
-       libxi-dev \
-       libudev-dev \
-       libfreetype-dev \
-       libflac-dev \
-       libvorbis-dev \
-       libgl1-mesa-dev \
-       libegl1-mesa-dev \
-       libfreetype-dev
-   ```
-8. Configure and build your project. Most popular IDEs support CMake projects with very little effort on your part.
+## Build System and Template Documentation
+- [Quick Start](#quick-start)
+- [Install and Run](#install-and-run)
+- [Upgrading SFML](#upgrading-sfml)
+- [Advanced CMake Options](#advanced-cmake-options)
 
-   - [VS Code](https://code.visualstudio.com) via the [CMake extension](https://code.visualstudio.com/docs/cpp/cmake-linux)
-   - [Visual Studio](https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170)
-   - [CLion](https://www.jetbrains.com/clion/features/cmake-support.html)
-   - [Qt Creator](https://doc.qt.io/qtcreator/creator-project-cmake.html)
+## Additional Information
+- [More Reading](#more-reading)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
-   Using CMake from the command line is straightforward as well.
-   Be sure to run these commands in the root directory of the project you just created.
+---
 
-   ```
-   cmake -B build
-   cmake --build build
-   ```
+# Game Documentation
 
-9. Enjoy!
+## Overview
 
-### Visual Studio
+SFML Pong is a modernized version of the classic arcade Pong game built using the  
+[SFML (Simple and Fast Multimedia Library)](https://www.sfml-dev.org/).
 
-Using a Visual Studio workspace is the simplest way to get started on windows.
+The project focuses on:
 
-1. Ensure you have the [required components installed](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio#installation).
-2. Follow [GitHub's instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) for how to use their project template feature to create your own project.
-3. If you have already cloned this repo, you can [open the folder](https://learn.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio0#ide-integration).
-4. If not, you can [clone it directly in Visual Studio](https://learn.microsoft.com/en-us/visualstudio/get-started/tutorial-open-project-from-repo).
+- Smooth gameplay
+- Simple but extendable code architecture
+- Clear separation between game logic and the build system
+- Cross-platform compatibility
 
-Visual Studio should automatically configure the CMake project, then you can build and run as normal through Visual Studio. See the links above for more details.
+---
+
+## Game Description
+
+The game recreates the classic Pong experience with several modern improvements.
+
+Features include:
+
+- Single-player mode with AI opponent
+- Increasing ball speed as rallies continue
+- Paddle-velocity-based ball deflection
+- Smooth AI paddle movement
+- Customizable background color
+- Adjustable FPS and audio volume
+- Settings menu accessible during gameplay
+
+The codebase is designed to remain simple and easy to extend with additional features.
+
+---
+
+## System Requirements
+
+Minimum requirements:
+
+- 64-bit CPU
+- 2 GB RAM
+- Display with **800×600 resolution**
+- Audio output device
+- A C++20-compatible compiler
+
+Required tools:
+
+- [Git](https://git-scm.com/)
+- [CMake](https://cmake.org/) 3.16 or newer
+
+---
+
+## How to Play
+
+| Key | Action |
+|----|----|
+| **W / S** or **↑ / ↓** | Move paddle |
+| **ESC** | Pause or resume |
+| **TAB** | Open settings |
+| **SPACE / ENTER** | Start or restart |
+
+Gameplay becomes progressively harder as the ball speed increases during long rallies.
+
+---
+
+# Build System and Template Documentation
+
+## Quick Start
+
+This project uses the official  
+[CMake SFML Project Template](https://github.com/SFML/cmake-sfml-project).
+
+### 1. Install Required Tools
+
+Install the following software:
+
+- Git — https://git-scm.com/downloads
+- CMake — https://cmake.org/download/
+
+### 2. Create a Repository From the Template
+
+Use GitHub’s template feature:
+
+https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template
+
+Template repository:
+
+https://github.com/SFML/cmake-sfml-project
+
+### 3. Clone the Repository
+
+```bash
+git clone <your-repo-url>
+cd <repo>
+```
+
+### 4. Modify the Project Name
+
+Open **CMakeLists.txt** and update:
+
+- the `project()` name
+- the executable target name
+
+### 5. Add Source Files
+
+Modify the `add_executable()` call:
+
+```cmake
+add_executable(game
+    main.cpp
+    pong.cpp
+)
+```
+
+### 6. Link SFML Modules
+
+```cmake
+target_link_libraries(game
+    PRIVATE
+        SFML::Graphics
+        SFML::Audio
+        SFML::Network
+)
+```
+
+---
+
+## Linux Dependencies
+
+Install required packages:
+
+```bash
+sudo apt update
+sudo apt install \
+    libxrandr-dev \
+    libxcursor-dev \
+    libxi-dev \
+    libudev-dev \
+    libfreetype-dev \
+    libflac-dev \
+    libvorbis-dev \
+    libgl1-mesa-dev \
+    libegl1-mesa-dev
+```
+
+---
+
+## Build the Project
+
+```bash
+cmake -B build
+cmake --build build
+```
+
+The executable will appear in the `build/` directory.
+
+Run it with:
+
+```bash
+cd build
+./main
+```
+
+---
+
+## Install and Run
+
+### Windows
+
+1. Clone the repository.
+2. Navigate to `src/Main`.
+3. Run `main.exe`.
+
+### macOS / Linux
+
+Compile and run:
+
+```bash
+g++ main.cpp -o main
+./main
+```
+
+Or use the CMake build system:
+
+```bash
+cmake -B build
+cmake --build build
+cd build
+./main
+```
+
+---
 
 ## Upgrading SFML
 
-SFML is found via CMake's [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) module.
-FetchContent automatically downloads SFML from GitHub and builds it alongside your own code.
-Beyond the convenience of not having to install SFML yourself, this ensures ABI compatibility and simplifies things like specifying static versus shared libraries.
+The project uses **CMake FetchContent** to automatically download SFML.
 
-Modifying what version of SFML you want is as easy as changing the `GIT_TAG` argument.
-Currently it uses SFML 3 via the `3.0.2` tag.
+Edit `CMakeLists.txt`:
 
-## But I want to...
+```cmake
+FetchContent_Declare(
+    SFML
+    GIT_REPOSITORY https://github.com/SFML/SFML.git
+    GIT_TAG        3.0.2
+)
+```
 
-Modify CMake options by adding them as configuration parameters (with a `-D` flag) or by modifying the contents of CMakeCache.txt and rebuilding.
+Change the `GIT_TAG` value to upgrade or downgrade the library version.
 
-### Not use GitHub
+---
 
-You can use this project without a GitHub account by [downloading the contents](https://github.com/SFML/cmake-sfml-project/archive/refs/heads/master.zip) of the repository as a ZIP archive and unpacking it locally.
-This approach also avoids using Git entirely if you would prefer to not do that.
+## Advanced CMake Options
 
-### Change Compilers
+### Change Compiler
 
-See the variety of [`CMAKE_<LANG>_COMPILER`](https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER.html) options.
-In particular you'll want to modify `CMAKE_CXX_COMPILER` to point to the C++ compiler you wish to use.
+You can specify a compiler with:
 
-### Change Compiler Optimizations
+```bash
+cmake -B build -DCMAKE_CXX_COMPILER=clang++
+```
 
-CMake abstracts away specific optimizer flags through the [`CMAKE_BUILD_TYPE`](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html) option.
-By default this project recommends `Release` builds which enable optimizations.
-Other build types include `Debug` builds which enable debug symbols but disable optimizations.
-If you're using a multi-configuration generator (as is often the case on Windows), you can modify the [`CMAKE_CONFIGURATION_TYPES`](https://cmake.org/cmake/help/latest/variable/CMAKE_CONFIGURATION_TYPES.html#variable:CMAKE_CONFIGURATION_TYPES) option.
+More information:
 
-### Change Generators
+https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER.html
 
-While CMake will attempt to pick a suitable default generator, some systems offer a number of generators to choose from.
-Ubuntu, for example, offers Makefiles and Ninja as two potential options.
-For a list of generators, click [here](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html).
-To modify the generator you're using you must reconfigure your project providing a `-G` flag with a value corresponding to the generator you want.
-You can't simply modify an entry in the CMakeCache.txt file unlike the above options.
-Then you may rebuild your project with this new generator.
+---
 
-## More Reading
+### Build Types
 
-Here are some useful resources if you want to learn more about CMake:
+| Type | Description |
+|-----|-------------|
+| Debug | Debug symbols, no optimization |
+| Release | Optimized build |
 
-- [Official CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/)
-- [How to Use CMake Without the Agonizing Pain - Part 1](https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-1.html)
-- [How to Use CMake Without the Agonizing Pain - Part 2](https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-2.html)
-- [Better CMake YouTube series by Jefferon Amstutz](https://www.youtube.com/playlist?list=PL8i3OhJb4FNV10aIZ8oF0AA46HgA2ed8g)
+Example:
 
-## License
+```bash
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+```
 
-The source code is dual licensed under Public Domain and MIT -- choose whichever you prefer.
+---
+
+### Change Generator
+
+Example using the Ninja generator:
+
+```bash
+cmake -G "Ninja" -B build
+cmake --build build
+```
+
+Generator documentation:
+
+https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
+
+---
+
+# More Reading
+
+- Official CMake Tutorial  
+  https://cmake.org/cmake/help/latest/guide/tutorial/
+
+- How to Use CMake Without the Agonizing Pain – Part 1  
+  https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-1.html
+
+- How to Use CMake Without the Agonizing Pain – Part 2  
+  https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-2.html
+
+- Better CMake YouTube Series  
+  https://www.youtube.com/playlist?list=PL8i3OhJb4FNV10aIZ8oF0AA46HgA2ed8g
+
+---
+
+# License
+
+The source code is dual-licensed under:
+
+- MIT License
+- Public Domain
+
+You may choose whichever license you prefer.
+
+---
+
+# Acknowledgements
+
+- [SFML — Simple and Fast Multimedia Library](https://www.sfml-dev.org/)
+- [CMake SFML Project Template](https://github.com/SFML/cmake-sfml-project)
+- The SFML developers and contributors.
