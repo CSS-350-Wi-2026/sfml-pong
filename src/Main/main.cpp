@@ -169,7 +169,7 @@ struct Ball
             vel.x = std::abs(vel.x);
 
             // Add angle based on paddle movement
-            vel.y += paddleVel * 0.35f;
+            vel.y += paddleVel * 5.f;
 
             // Clamp vertical speed
             vel.y = std::clamp(vel.y, -250.f, 250.f);
@@ -196,7 +196,7 @@ struct Ball
             vel.x = -std::abs(vel.x);
 
 			// Add angle based on paddle movement
-            vel.y += paddleVel * 0.35f;
+            vel.y += paddleVel * 5.f;
 
 			// Clamp vertical speed
             vel.y = std::clamp(vel.y, -250.f, 250.f);
