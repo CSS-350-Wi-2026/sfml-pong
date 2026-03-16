@@ -276,24 +276,44 @@ sf::Color stoC(const std::string colorStr) {
     return sf::Color::Black;
 }
 
+//normalize a string by removing whitespace and converting to lowercase, used for color input
+std::string normaliseColor(const std::string& s) 
+{
+    std::string out;
+    out.reserve(s.size());
+
+    for (char c : s) 
+    {
+        if (!std::isspace(static_cast<unsigned char>(c))) 
+        {
+            out.push_back(std::tolower(static_cast<unsigned char>(c)));
+        }
+    }
+    return out;
+}
+
 //load user settings from a txt file called config.txt, if file not found, create one with default value
 //file should look like: 
 //fps
 //color
-void loadConfig() {
+void loadConfig() 
+{
     std::ifstream readFile("config.txt");
 
-    if (!readFile.is_open()) {
+    if (!readFile.is_open()) 
+    {
         std::ofstream writeFile("config.txt");
 
         writeFile << fps << "\n" << "black";
         writeFile.close();
     }
-    else {
+    else 
+    {
         std::string temp;
         readFile >> fps;
         readFile >> temp;
         bkgColor = stoC(temp);
+        bkgColorStr = temp;
         readFile.close();
     }
 }
@@ -320,7 +340,7 @@ void settingsWindow(const sf::Font& font)
 {
     sf::RenderWindow settings(sf::VideoMode({ 400, 260 }), "Settings");
 
-    sf::Text bgColorLabel(font, "Background color (lower case):", 20);
+    sf::Text bgColorLabel(font, "Background color:", 20);
     bgColorLabel.setFillColor(sf::Color::Black);
     bgColorLabel.setPosition({ 20, 15 });
 
@@ -361,16 +381,19 @@ void settingsWindow(const sf::Font& font)
         {
             if (ev->is<sf::Event::Closed>()) settings.close();
 
-            if (const auto* mb = ev->getIf<sf::Event::MouseButtonPressed>()) {
+            if (const auto* mb = ev->getIf<sf::Event::MouseButtonPressed>()) 
+            {
                 sf::Vector2f mp(static_cast<float>(mb->position.x),
                                 static_cast<float>(mb->position.y));
                 if      (colorBox.getGlobalBounds().contains(mp)) { onColor = true;  onFps = false; }
                 else if (fpsBox.getGlobalBounds().contains(mp))   { onColor = false; onFps = true;  }
             }
 
-            if (const auto* te = ev->getIf<sf::Event::TextEntered>()) {
+            if (const auto* te = ev->getIf<sf::Event::TextEntered>())
+            {
                 char ch = static_cast<char>(te->unicode);
-                if (te->unicode == '\b') {
+                if (te->unicode == '\b') 
+                {
                     if (onColor && !colorStr.empty()) colorStr.pop_back();
                     else if (onFps && !fpsStr.empty()) fpsStr.pop_back();
                 } else if (te->unicode < 128) {
@@ -396,20 +419,23 @@ void settingsWindow(const sf::Font& font)
         settings.display();
     }
 
-    if (!fpsStr.empty()) { 
+    if (!fpsStr.empty()) 
+    { 
         fps = std::stoi(fpsStr); 
         updateConfig(fps, bkgColorStr);
     }
-    if (!colorStr.empty()) { 
-        bkgColor = stoC(colorStr);
+    if (!colorStr.empty()) {
+        std::string colorStrNormalised = normaliseColor(colorStr);
+        bkgColor = stoC(colorStrNormalised);
 
-        if (bkgColor == sf::Color::Black) { //if entered invalid color and stoC() return black
+        if (bkgColor == sf::Color::Black && colorStrNormalised != "black") {
+            // invalid color
             bkgColorStr = "black";
             updateConfig(fps, "black");
         }
         else {
-            bkgColorStr = colorStr;
-            updateConfig(fps, colorStr);
+            bkgColorStr = colorStrNormalised;
+            updateConfig(fps, colorStrNormalised);
         }
     }
 }
