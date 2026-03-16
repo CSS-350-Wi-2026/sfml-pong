@@ -32,7 +32,7 @@ constexpr float    BALL_R     = 9.f;
 constexpr float    PADDLE_SPD = 2.f;
 constexpr float    BALL_SPD   = 200.f;
 constexpr float    BALL_SPD_INCREMENT = 0.1f; // Increment to increase ball speed after each paddle hit
-constexpr float    MAX_BALL_SPD = 400.f; // Maximum ball speed 
+constexpr float    MAX_BALL_SPD = 500.f; // Maximum ball speed 
 constexpr float    AI_SPD     = 1.8f;         // AI paddle speed (slightly slower than player)
 // Winning Score
 constexpr int      WIN_SCORE  = 7;
