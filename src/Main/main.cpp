@@ -32,6 +32,7 @@ constexpr float    BALL_R     = 9.f;
 constexpr float    PADDLE_SPD = 2.f;
 constexpr float    BALL_SPD   = 200.f;
 constexpr float    BALL_SPD_INCREMENT = 0.1f; // Increment to increase ball speed after each paddle hit
+constexpr float    MAX_BALL_SPD = 400.f; // Maximum ball speed 
 constexpr float    AI_SPD     = 1.8f;         // AI paddle speed (slightly slower than player)
 // Winning Score
 constexpr int      WIN_SCORE  = 7;
@@ -80,6 +81,9 @@ public:
 
 	//get the bounding box of the Paddle for collision detection
     sf::FloatRect bounds() const { return shape.getGlobalBounds(); }
+
+    //get the verical velocity of the Paddle
+    float getYVelocity() const { return yVelocity; }
 
     //set the vertical velocity of the Paddle
     void setYVelocity(float velocity) { yVelocity = velocity; }
@@ -158,26 +162,58 @@ struct Ball
         //Paddle collisions
         if (ballRect.findIntersection(leftRect).has_value())
         {
-            vel.x = std::abs(vel.x); //bounce right
-            vel *= (1.f + BALL_SPD_INCREMENT);
+            float paddleVel = leftPaddle->getYVelocity();
 
-             // Push ball out of paddle to prevent sticking
+            // Ensure ball bounces right
+            vel.x = std::abs(vel.x);
+
+            // Add angle based on paddle movement
+            vel.y += paddleVel * 0.35f;
+
+            // Clamp vertical speed
+            vel.y = std::clamp(vel.y, -250.f, 250.f);
+
+            // Speed increase
+            if (vel.length() < MAX_BALL_SPD)
+            {
+                vel *= (1.f + BALL_SPD_INCREMENT);
+            }
+
+            // Prevent trapping ball in paddle
             shape.setPosition({ leftRect.position.x + leftRect.size.x + BALL_R,
-                                 shape.getPosition().y });
-			bounces++; //increment bounce count for speed increase
+                                shape.getPosition().y });
+
+            bounces++;
             if (onPaddleHit) { onPaddleHit(); }
         }
 
         if (ballRect.findIntersection(rightRect).has_value())
         {
-            vel.x = -std::abs(vel.x); //bounce left
-            vel *= (1.f + BALL_SPD_INCREMENT);
+            float paddleVel = rightPaddle->getYVelocity();
 
+			// Ensure ball bounces left
+            vel.x = -std::abs(vel.x);
+
+			// Add angle based on paddle movement
+            vel.y += paddleVel * 0.35f;
+
+			// Clamp vertical speed
+            vel.y = std::clamp(vel.y, -250.f, 250.f);
+
+			// Speed increase
+            if (vel.length() < MAX_BALL_SPD)
+            {
+                vel *= (1.f + BALL_SPD_INCREMENT);
+            }
+
+			// Prevent trapping ball in paddle
             shape.setPosition({ rightRect.position.x - BALL_R,
-                                 shape.getPosition().y });
-			bounces++; //increment bounce count for speed increase
-            if (onPaddleHit) { onPaddleHit(); }
+                                shape.getPosition().y });
+
+            bounces++;
+            if (onPaddleHit) onPaddleHit();
         }
+
 
         //recompute after bounce
         ballRect = bounds();
@@ -411,6 +447,11 @@ int main() {
                             sf::Style::Titlebar | sf::Style::Close);
     window.setFramerateLimit(fps);
 
+	// AI offset for smooth movement
+    int aiOffset = 0;
+    sf::Clock aiOffsetTimer;
+	srand(time(nullptr));
+
      // Fonts
     sf::Font font;
     if (!font.openFromFile(FONT_PATH)) {
@@ -531,7 +572,13 @@ int main() {
             player1Paddle.moveY();
 
             // AI tracks the ball
-            player2Paddle.aiMoveTo(ball.shape.getPosition().y);
+            if (aiOffsetTimer.getElapsedTime().asSeconds() > 1.5f) {
+                aiOffset = (std::rand() % 60 - 30); // wider, smoother randomness
+                aiOffsetTimer.restart();
+            }
+
+            player2Paddle.aiMoveTo(ball.shape.getPosition().y + aiOffset);
+
 
             // Ball update + scoring
             int scored = ball.update(dt);
