@@ -3,6 +3,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Export.hpp>
 #include <SFML/Window/Event.hpp>
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
