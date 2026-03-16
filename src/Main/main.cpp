@@ -57,11 +57,11 @@ enum class State { Menu, Playing, Paused, GameOver };
 struct Paddle
 {
 private:
-	float yVelocity = 0; // Velocity of the paddle in the vertical direction
+	float yVelocity = 0; //velocity of the paddle in the vertical direction
 public:
     sf::RectangleShape shape;
 
-	// Create a paddle at the given x position, centered vertically
+	//create a Paddle at the given x position, centered vertically
     Paddle(float x)
     {
         shape.setSize({ PADDLE_W, PADDLE_H });
@@ -70,7 +70,7 @@ public:
         shape.setPosition({ x, WINDOW_H / 2.f });
     }
 
-	// Ensure the paddle stays within the window bounds
+	//ensure the paddle stays within the window bounds
     void clamp()
     {
         float y = shape.getPosition().y;
@@ -78,13 +78,13 @@ public:
         shape.setPosition({ shape.getPosition().x, y });
     }
 
-	// Get the bounding box of the paddle for collision detection
+	//get the bounding box of the Paddle for collision detection
     sf::FloatRect bounds() const { return shape.getGlobalBounds(); }
 
-    // Set the vertical velocity of the paddle
+    //set the vertical velocity of the Paddle
     void setYVelocity(float velocity) { yVelocity = velocity; }
 
-	// Move the paddle by a certain amount
+	//move the Paddle by a certain amount
 	void moveY() 
     { 
 		if (bounds().position.y + yVelocity < 0 || bounds().position.y + bounds().size.y + yVelocity > WINDOW_H) {
