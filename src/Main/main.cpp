@@ -46,9 +46,9 @@ constexpr float    DASH_W = 4.f;
 constexpr float    DASH_H = 20.f;
 // Theme Color
 constexpr sf::Color THEME_COLOR = sf::Color::White;
-// framerate
+// Framerate
 int fps = 60;
-// background color
+// Background color
 sf::Color bkgColor = sf::Color::Black;
 std::string bkgColorStr = "black"; //string version of bkgColor
 
@@ -59,11 +59,11 @@ enum class State { Menu, Playing, Paused, GameOver };
 struct Paddle
 {
 private:
-	float yVelocity = 0; //velocity of the paddle in the vertical direction
+	float yVelocity = 0; // Velocity of the paddle in the vertical direction
 public:
     sf::RectangleShape shape;
 
-	//create a Paddle at the given x position, centered vertically
+	// Create a Paddle at the given x position, centered vertically
     Paddle(float x)
     {
         shape.setSize({ PADDLE_W, PADDLE_H });
@@ -72,7 +72,7 @@ public:
         shape.setPosition({ x, WINDOW_H / 2.f });
     }
 
-	//ensure the paddle stays within the window bounds
+	// Ensure the paddle stays within the window bounds
     void clamp()
     {
         float y = shape.getPosition().y;
@@ -80,16 +80,16 @@ public:
         shape.setPosition({ shape.getPosition().x, y });
     }
 
-	//get the bounding box of the Paddle for collision detection
+	// Get the bounding box of the Paddle for collision detection
     sf::FloatRect bounds() const { return shape.getGlobalBounds(); }
 
-    //get the verical velocity of the Paddle
+    // Get the verical velocity of the Paddle
     float getYVelocity() const { return yVelocity; }
 
-    //set the vertical velocity of the Paddle
+    // Set the vertical velocity of the Paddle
     void setYVelocity(float velocity) { yVelocity = velocity; }
 
-	//move the Paddle by a certain amount
+	// Move the Paddle by a certain amount
 	void moveY() 
     { 
 		if (bounds().position.y + yVelocity < 0 || bounds().position.y + bounds().size.y + yVelocity > WINDOW_H) {
@@ -104,7 +104,9 @@ public:
         float diff    = targetY - paddleY;
         float move    = std::min(std::abs(diff), AI_SPD);
         if (std::abs(diff) > 2.f)
+        {
             shape.move({ 0.f, diff > 0.f ? move : -move });
+        }
         clamp();
     }
 };
@@ -153,7 +155,7 @@ struct Ball
 
     int update(float dt)
     {
-        //move Ball
+        // Move Ball
         shape.move(vel * dt);
 
         sf::FloatRect ballRect = bounds();
@@ -216,10 +218,10 @@ struct Ball
         }
 
 
-        //recompute after bounce
+        // Recompute after bounce
         ballRect = bounds();
 
-        //wall collisions
+        // Wall collisions
         if (ballRect.position.y <= 0.f)
         {
             vel.y = std::abs(vel.y); //bounce down
@@ -243,7 +245,7 @@ struct MidLine
 {
 	std::vector<sf::RectangleShape> segments;
 
-	//create a dashed midline with the specified number of dashes
+	// Create a dashed midline with the specified number of dashes
     MidLine(int numDashes) {
         for (int i = 0; i < numDashes; ++i) {
             sf::RectangleShape dash({ DASH_W, DASH_H });
@@ -254,7 +256,7 @@ struct MidLine
     }
 };
 
-//convert a given string to sf::Color object, all lower case, if invalid string, return black
+// Convert a given string to sf::Color object, all lower case, if invalid string, return black
 sf::Color stoC(const std::string colorStr) {
     static const std::unordered_map<std::string, sf::Color> colorMap{
         {"black",   sf::Color::Black},
@@ -276,7 +278,7 @@ sf::Color stoC(const std::string colorStr) {
     return sf::Color::Black;
 }
 
-//normalize a string by removing whitespace and converting to lowercase, used for color input
+// Normalise a string by removing whitespace and converting to lowercase, used for color input
 std::string normaliseColor(const std::string& s) 
 {
     std::string out;
@@ -292,10 +294,10 @@ std::string normaliseColor(const std::string& s)
     return out;
 }
 
-//load user settings from a txt file called config.txt, if file not found, create one with default value
-//file should look like: 
-//fps
-//color
+// Load user settings from a txt file called config.txt, if file not found, create one with default value
+// File should look like: 
+// fps
+// color
 void loadConfig() 
 {
     std::ifstream readFile("config.txt");
@@ -318,10 +320,10 @@ void loadConfig()
     }
 }
 
-//update the user settings file, will create a config.txt if no file found
-//file should look like: 
-//fps
-//color
+// Update the user settings file, will create a config.txt if no file found
+// File should look like: 
+// fps
+// color
 void updateConfig(const int& fps, const std::string& color) {
     std::ofstream writeFile("config.txt", std::ios::trunc);
 
@@ -335,7 +337,7 @@ void updateConfig(const int& fps, const std::string& color) {
     writeFile.close();
 }
 
-//window for settings menu
+// Window for settings menu
 void settingsWindow(const sf::Font& font)
 {
     sf::RenderWindow settings(sf::VideoMode({ 400, 260 }), "Settings");
@@ -379,7 +381,7 @@ void settingsWindow(const sf::Font& font)
     {
         while (const auto ev = settings.pollEvent())
         {
-            if (ev->is<sf::Event::Closed>()) settings.close();
+            if (ev->is<sf::Event::Closed>()) { settings.close(); }
 
             if (const auto* mb = ev->getIf<sf::Event::MouseButtonPressed>()) 
             {
@@ -428,12 +430,14 @@ void settingsWindow(const sf::Font& font)
         std::string colorStrNormalised = normaliseColor(colorStr);
         bkgColor = stoC(colorStrNormalised);
 
-        if (bkgColor == sf::Color::Black && colorStrNormalised != "black") {
+        if (bkgColor == sf::Color::Black && colorStrNormalised != "black") 
+        {
             // invalid color
             bkgColorStr = "black";
             updateConfig(fps, "black");
         }
-        else {
+        else 
+        {
             bkgColorStr = colorStrNormalised;
             updateConfig(fps, colorStrNormalised);
         }
@@ -468,7 +472,8 @@ sf::SoundBuffer makeTone(float freqHz, float durationSec, float amplitude = 0.4f
 }
 
 
-int main() {
+int main() 
+{
     sf::Listener::setGlobalVolume(100.f);
 	sf::RenderWindow window(sf::VideoMode({ WINDOW_W, WINDOW_H }), "Pong",
                             sf::Style::Titlebar | sf::Style::Close);
@@ -481,12 +486,13 @@ int main() {
 
      // Fonts
     sf::Font font;
-    if (!font.openFromFile(FONT_PATH)) {
+    if (!font.openFromFile(FONT_PATH)) 
+    {
         std::cerr << "WARNING: Could not load " << FONT_PATH
                   << " — place DejaVuSans.ttf next to the executable\n";
     }
 
-    //load user settings
+    // Load user settings
     loadConfig();
 
     // Sounds
@@ -500,17 +506,17 @@ int main() {
     sf::Sound sndScore (bufScore);
     sf::Sound sndWin   (bufWin);
 	
-	//create Paddles for players 1 and 2
+	// Create Paddles for players 1 and 2
     Paddle player1Paddle(40.f);
     Paddle player2Paddle(WINDOW_W - 40.f);
 
-	//create Ball
+	// Create Ball
 	Ball ball(player1Paddle, player2Paddle);
     ball.onPaddleHit = [&]() { sndPaddle.play(); };
     ball.onWallHit   = [&]() { sndWall.play();   };
 	ball.reset(true); // Start with player serve
 
-	//create Midline
+	// Create Midline
 	MidLine midline(15);
 
     // Scores & state
@@ -538,7 +544,7 @@ int main() {
     };
 
 
-	//game loop
+	// Game loop
 	while ( window.isOpen() )
 	{
         float dt = clock.restart().asSeconds();
@@ -605,7 +611,8 @@ int main() {
             player1Paddle.moveY();
 
             // AI tracks the ball
-            if (aiOffsetTimer.getElapsedTime().asSeconds() > 1.5f) {
+            if (aiOffsetTimer.getElapsedTime().asSeconds() > 1.5f) 
+            {
                 aiOffset = (std::rand() % 60 - 30); // wider, smoother randomness
                 aiOffsetTimer.restart();
             }
@@ -634,14 +641,14 @@ int main() {
         // Drawing
 		window.clear(bkgColor);
 
-		//draw Paddles
+		// Draw Paddles
         window.draw(player1Paddle.shape);
         window.draw(player2Paddle.shape);
 
-		//draw Midline
-        for (const auto& dash : midline.segments) {window.draw(dash);}
+		// Draw Midline
+        for (const auto& dash : midline.segments) { window.draw(dash); }
 
-        // draw Ball only if game is active
+        // Draw Ball only if game is active
          if (state == State::Playing || state == State::Paused) {
             window.draw(ball.shape);
         }
@@ -716,7 +723,7 @@ int main() {
             window.draw(sub);
         }
 
-		//opens Window
+		// Opens Window
 		window.display();
 	}
     return 0;
